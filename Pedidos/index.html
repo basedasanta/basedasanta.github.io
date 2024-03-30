@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedidos</title>
+<style>
+    body {
+        background-color: black;
+        color: #ffa400;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ffa400;
+        border-radius: 10px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Exibição de Pedidos</h1>
+    <p>Quantidade de pedidos: <span id="quantidadePedidos">Carregando...</span></p>
+    <h2>Pedidos do Firebase:</h2>
+    <div id="firebasePedidos"></div>
+</div>
+
+<script>
+    // Função para buscar os pedidos no Firebase
+    function getPedidos() {
+        fetch('https://pedidosbds-53fd3-default-rtdb.firebaseio.com/pedidos.json')
+        .then(response => response.json())
+        .then(data => {
+            // Contagem da quantidade de pedidos
+            const quantidadePedidos = Object.keys(data).length;
+            document.getElementById('quantidadePedidos').innerText = quantidadePedidos;
+
+            // Exibição dos pedidos
+            const firebasePedidos = document.getElementById('firebasePedidos');
+            firebasePedidos.innerHTML = '';
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const pedido = data[key];
+                    const pedidoHTML = `
+                        <div>
+                            <h3>${pedido.nome}</h3>
+                            <p><strong>Tamanho:</strong> ${pedido.tamanho}</p>
+                            <p><strong>Telefone:</strong> ${pedido.telefone}</p>
+                            <p><strong>Mensagem:</strong> ${pedido.mensagem}</p>
+                        </div>
+                    `;
+                    firebasePedidos.innerHTML += pedidoHTML;
+                }
+            }
+        })
+        .catch(error => console.error('Erro ao buscar pedidos:', error));
+    }
+
+    // Chamada da função ao carregar a página
+    window.onload = getPedidos;
+</script>
+</body>
+</html>
